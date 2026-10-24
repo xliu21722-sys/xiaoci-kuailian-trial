@@ -1,5 +1,5 @@
-const CACHE='xiaoci-0.4.0-3-d12708129b7d081f';
-const shell=['./','./index.html','./app.js?v=d12708129b7d081f','./styles.css?v=d12708129b7d081f','./assets/logo.png','./capture-worklet.js','./tts-worker.js','./vosk-worker.js','./manifest.webmanifest','./help.html'];
+const CACHE='xiaoci-0.4.0-3-91db2325f7e26fc0';
+const shell=['./','./index.html','./app.js?v=91db2325f7e26fc0','./styles.css?v=91db2325f7e26fc0','./assets/logo.png','./capture-worklet.js','./tts-worker.js','./vosk-worker.js','./manifest.webmanifest','./help.html'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(shell)));});
 // Activate at the next normal visit. Never reload or replace a worker mid-rehearsal.
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('xiaoci-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
