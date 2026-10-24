@@ -1,4 +1,4 @@
-const CACHE='xiaoci-0.4.0-2';
+const CACHE='xiaoci-0.4.0-3';
 const shell=['./','./index.html','./app.js','./styles.css','./assets/logo.png','./capture-worklet.js','./tts-worker.js','./vosk-worker.js','./manifest.webmanifest','./help.html'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(shell)));});
 // Activate at the next normal visit. Never reload or replace a worker mid-rehearsal.

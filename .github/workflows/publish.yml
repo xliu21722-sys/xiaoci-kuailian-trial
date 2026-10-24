@@ -1,6 +1,11 @@
 name: Publish browser and desktop preview
 on:
   workflow_dispatch:
+    inputs:
+      desktop:
+        description: Also rebuild desktop preview archives
+        type: boolean
+        default: false
   push:
     branches: [codex/trial-site]
 permissions:
@@ -35,6 +40,7 @@ jobs:
           retention-days: 3
           compression-level: 0
       - name: Prepare draft release
+        if: github.event_name == 'workflow_dispatch' && inputs.desktop
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -55,6 +61,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
   desktop:
+    if: github.event_name == 'workflow_dispatch' && inputs.desktop
     needs: prepare
     strategy:
       fail-fast: false
