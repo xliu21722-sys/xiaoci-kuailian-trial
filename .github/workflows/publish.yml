@@ -1,0 +1,110 @@
+name: Publish browser and desktop preview
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/trial-site]
+permissions:
+  contents: read
+concurrency:
+  group: preview-release
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: speech-assets/downloads
+          key: official-speech-vosk-cn-022-sherpa-200
+      - run: python scripts/prepare-speech-assets.py
+      - run: python scripts/assemble-speech.py web
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portable-web
+          path: web
+          include-hidden-files: true
+          retention-days: 3
+          compression-level: 0
+      - name: Prepare draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.4.0-trial.1 >/dev/null 2>&1; then
+            gh release create v0.4.0-trial.1 --target "$GITHUB_SHA" --draft --prerelease --title "小词快练 0.4.0 跨平台试用" --notes-file RELEASE.md
+          fi
+  pages:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy public trial
+        id: deployment
+        uses: actions/deploy-pages@v4
+  desktop:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: macos-latest, platform: darwin, arch: arm64}
+          - {os: macos-latest, platform: darwin, arch: x64}
+          - {os: windows-latest, platform: win32, arch: x64}
+          - {os: windows-latest, platform: win32, arch: arm64}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify and extract runtime source
+        shell: bash
+        run: |
+          python -c "import hashlib,pathlib,zipfile; p=pathlib.Path('runtime-source.zip'); assert hashlib.sha256(p.read_bytes()).hexdigest()==pathlib.Path('runtime-source.sha256').read_text().split()[0]; zipfile.ZipFile(p).extractall('runtime')"
+      - uses: actions/download-artifact@v4
+        with:
+          name: portable-web
+          path: runtime/portable-dist
+      - name: Install pinned dependencies
+        working-directory: runtime
+        run: npm ci --ignore-scripts
+      - name: Restore native helper permissions
+        if: matrix.platform == 'darwin'
+        run: chmod +x runtime/src/native/local-asr runtime/src/native/local-voice
+      - name: Build platform preview
+        working-directory: runtime
+        run: node scripts/package-trial.mjs ${{ matrix.platform }} ${{ matrix.arch }}
+      - run: python scripts/zip-build.py ${{ matrix.platform }} ${{ matrix.arch }}
+      - name: Upload checked archive and checksum
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.4.0-trial.1 release/* --clobber
+  publish:
+    needs: [desktop, pages]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit v0.4.0-trial.1 --draft=false --prerelease --latest=false

@@ -1,0 +1,5 @@
+speech-assets/
+runtime/
+release/
+web/speech/
+*.log

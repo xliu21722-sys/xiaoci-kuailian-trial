@@ -1,0 +1,21 @@
+Third-party code bundled for local document reading
+===================================================
+
+PDF.js / pdfjs-dist 5.6.205
+Project: https://mozilla.github.io/pdf.js/
+Source: https://github.com/mozilla/pdf.js
+Package: https://www.npmjs.com/package/pdfjs-dist/v/5.6.205
+License: Apache License 2.0. Full license: pdfjs/LICENSE.
+Files copied from the provided runtime package: legacy/build/pdf.mjs,
+legacy/build/pdf.worker.mjs, cmaps/, standard_fonts/.
+Individual font license files in standard_fonts/ are retained.
+
+Mammoth 1.13.0
+Project/source: https://github.com/mwilliamson/mammoth.js
+Downloaded package: https://registry.npmjs.org/mammoth/-/mammoth-1.13.0.tgz
+License: BSD 2-Clause. Full license: mammoth/LICENSE.
+Browser bundle: mammoth/mammoth.browser.min.js.
+
+These dependencies are served from this site. The importer does not upload
+scripts or fetch third-party CDN code at runtime. PDF.js reads PDF text and
+Mammoth extracts raw DOCX text; imported content is never inserted as HTML.
