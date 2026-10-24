@@ -1,11 +1,11 @@
-新增浏览器/PWA、Windows x64/ARM64、Mac Apple Silicon/Intel 试用版本。
+提供网页版及 Windows x64/ARM64、Mac Apple Silicon/Intel 客户端试用版本。
 
-**[直接打开浏览器版](https://xliu21722-sys.github.io/xiaoci-kuailian-trial/)** · **[使用与下载](https://xliu21722-sys.github.io/xiaoci-kuailian-trial/help.html)**
+**[直接打开网页版](https://xliu21722-sys.github.io/xiaoci-kuailian-trial/)** · **[使用与下载](https://xliu21722-sys.github.io/xiaoci-kuailian-trial/help.html)**
 
 - 无需 GitHub 登录。第一次使用浏览器需要下载约 190 MB 模型；之后在电脑本机免费识别和朗读。
 - 共用剧本增删、发音容错、否定词核对、重复事件防护、双方录音和独立回练逻辑。
-- Fish 克隆音保留，使用各人自己的账户，不共享开发者密钥；不自动切换收费模型。浏览器 Fish 请求受平台跨域政策限制，离线声音不受影响。
-- 桌面包需要 Windows 10/11 或 macOS 13+。Chrome/Edge 可将网页安装为独立窗口。
+- Fish 克隆音保留，使用各人自己的账户，不共享开发者密钥；不自动切换收费模型。网页版仅支持离线声音，Fish 请使用下载的客户端。
+- 客户端需要 Windows 10/11 或 macOS 13+。
 
 ## 验证和限制
 
